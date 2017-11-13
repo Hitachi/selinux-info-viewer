@@ -1,0 +1,6 @@
+*.pyc
+*.BAK
+tmp
+nohup.out
+thirdparty
+result
