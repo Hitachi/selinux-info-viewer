@@ -101,9 +101,13 @@ output-dir = /tmp/result
 1) resultフォルダの中身を更新してください。
 1) ./sh/start.shを起動し、データベースを再構築します。
 
-# Contribution
-TODO
+# Contributing
+バグレポート、バグフィックス、および改善に貢献してくださったことに感謝します。
+## Bug Report
+不具合があった場合はIssueから報告してください。
 
+## Bugfixes and Improvements
+修正・機能追加はPull Requestで報告してください。
 
 
 # License

@@ -92,9 +92,13 @@ NOTICE: This program might have long time for some environments.
 1) Run ./sh/destroy_db.sh
 1) Start the server.
 
-# Contribution
-TODO
+# Contributing
+We are grateful for contributing bug reports, bugfixes and improvements.
+## Bug Report
+Please open a new issue.
 
+## Bugfixes and Improvements
+Please open a new pull request.
 
 
 # License
