@@ -73,6 +73,9 @@ output-dir = /tmp/result
 1) ビューワ用マシン上にSELinux Information Viewerを配備してください。
 1) 下記コマンドを実行し必要なサードパティツールをダウンロードしてください
     * ./install.sh
+      * このコマンドは PostgreSQLといくつかのツールをローカルの"thirdparty"ディレクトリにダウンロードおよびビルドします。
+      * 本ツールではPostgreSQL 9.6 以上を使用しています.
+      * ローカルビルドのため,アンインストールする際は"thirdparty"ディレクトリを削除ください。
     * プロキシを超える必要がある場合、~/.curlrcファイルを作成し、プロキシ情報を記載してください。
         * proxy-user = "&lt;username&gt;:&lt;passwd&gt;"
         * proxy = "&lt;proxy-url&gt;"

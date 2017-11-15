@@ -74,6 +74,9 @@ NOTICE: This program might have long time for some environments.
 1) Deploy SELinux Information Viewer.
 1) Run below command to download thirdparty tools.
     * ./install.sh
+      * This command downloads and builds PostgreSQL and some tools in a local "thirdparty" directory.
+      * This tool uses PostgreSQL 9.6 or newer.
+      * Because of a local build, delete the "thirdparty" directory if you want to uninstall.
     * If you need to go beyond proxies, you should create ~/.curlrc file and write below information in the file.
         * proxy-user = "&lt;username&gt;:&lt;passwd&gt;"
         * proxy = "&lt;proxy-url&gt;"
