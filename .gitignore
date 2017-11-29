@@ -4,3 +4,4 @@ tmp
 nohup.out
 thirdparty
 result
+result.*
