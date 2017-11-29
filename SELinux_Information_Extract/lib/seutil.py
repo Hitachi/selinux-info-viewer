@@ -396,23 +396,40 @@ def netstat_udp_generator():
   return netstat_ip_generator("u")
   
 def netstat_unix_socket_generator():
-  command = r"sudo netstat -Znpx | sed  -e '1,2d'| sed 's/ \+/ /g'"
-  pattern = r'^(?P<Proto>[^ ]+?)' \
-            r' (?P<RefCnt>[0-9]+?)' \
-            r' \[(?P<Flags>[^\]]+?)\]' \
-            r' (?P<Type>[^ ]+?)' \
-            r' ((?P<State>[^ ]+?) )?(?P<INode>[0-9]+?)' \
-            r' (-|(?P<PID>[0-9]+?)/(?P<ProgramName>[^ ]+?(: [^ ]+?)?))' \
-            r' (-|(?P<SecurityContext>[^ ]+?))' \
-            r'($| (?P<Path>.+?)$)'
+  command = r"sudo netstat -Znpx"
+  line_generator = util.run_and_readline(command)
+  line_generator.next();
+  header = line_generator.next();
+  header_pattern = r'(?P<Proto>Proto +)' \
+                   r'(?P<RefCnt>RefCnt +)' \
+                   r'(?P<Flags>Flags +)' \
+                   r'(?P<Type>Type +)' \
+                   r'(?P<State>State +)' \
+                   r'(?P<INode>I-Node +)' \
+                   r'(?P<PID>PID/Program name +)' \
+                   r'(?P<SecurityContext>Security Context +)' \
+                   r'(?P<Path>Path *)'
+  header_regex = re.compile(header_pattern)
+  header_match = header_regex.match(header)
+  
+  pattern = r'^(?P<Proto>.{' + str(len(header_match.group("Proto"))) +r'})' \
+            r'(?P<RefCnt>.{' + str(len(header_match.group("RefCnt"))) +r'})' \
+            r'(?P<Flags>.{' + str(len(header_match.group("Flags"))) +r'})' \
+            r'(?P<Type>.{' + str(len(header_match.group("Type"))) +r'})' \
+            r'(?P<State>.{' + str(len(header_match.group("State"))) +r'})' \
+            r'(?P<INode>.{' + str(len(header_match.group("INode"))) +r'})' \
+            r'(?P<PID>.{' + str(len(header_match.group("PID"))) +r'})' \
+            r'(?P<SecurityContext>.{' + str(len(header_match.group("SecurityContext"))) +r'})' \
+            r'((?P<Path>.*?)$)'
   regex = re.compile(pattern)
-  for line in util.run_and_readline(command):
-      line = line.strip()
+
+  for line in line_generator:
       match = regex.match(line)
       if match:
       
         label = match.group("SecurityContext")
-        if not label is None:
+        label = label.strip()
+        if not label == '-':
           vals = label.split(":")
           user, role, domain = vals[:3]
           level = ":".join(vals[3:])
@@ -422,16 +439,29 @@ def netstat_unix_socket_generator():
             "domain": domain,
             "level": level,
           }
+        else:
+          label = None
+        
+        pid = match.group("PID")
+        program_name = None
+        pid = pid.strip()
+        if not pid == '-':
+          vals = pid.split("/")
+          pid = vals[0]
+          program_name = "/".join(vals[1:])
+        else:
+          pid = None
+
         data = {
-          "Proto": match.group("Proto") ,
-          "RefCnt": match.group("RefCnt") ,
-          "Flags": match.group("Flags") ,
-          "Type": match.group("Type"),
-          "State": match.group("State"),
-          "I-Node": match.group("INode"),
-          "PID": match.group("PID"),
-          "Program name": match.group("ProgramName"),
+          "Proto": match.group("Proto").strip() ,
+          "RefCnt": match.group("RefCnt").strip() ,
+          "Flags": match.group("Flags").strip()[1:-1].strip() ,
+          "Type": match.group("Type").strip(),
+          "State": match.group("State").strip(),
+          "I-Node": match.group("INode").strip(),
+          "PID": pid,
+          "Program name": program_name,
           "Security Context": label,
-          "Path": match.group("Path"),
+          "Path": match.group("Path").strip(),
         }
         yield data
